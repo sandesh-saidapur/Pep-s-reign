@@ -13,6 +13,10 @@ SEASONS: list[str] = [
     f"{y}-{str(y + 1)[-2:]}" for y in range(FIRST_SEASON_START, LAST_SEASON_START + 1)
 ]
 
+# 2015/16 was Pellegrini's last season: the pre-Pep baseline.
+BASELINE_SEASONS: list[str] = ["2015-16"]
+ALL_SEASONS: list[str] = BASELINE_SEASONS + SEASONS
+
 CLUB = "Manchester City"
 
 OPENFOOTBALL_URL = (

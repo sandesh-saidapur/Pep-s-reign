@@ -5,9 +5,15 @@ from __future__ import annotations
 import pandas as pd
 import typer
 
-from pep_reign.config import CLUB, PROCESSED_DIR, SEASONS
+from pep_reign.config import ALL_SEASONS, CLUB, PROCESSED_DIR
 from pep_reign.ingest import football_data
 from pep_reign.ingest.openfootball import load_seasons
+from pep_reign.transform.league_context import (
+    add_era,
+    add_league_context,
+    add_points_per_game,
+    era_summary,
+)
 from pep_reign.transform.reconcile import check_scores_agree
 from pep_reign.transform.shots import add_per_game_shots, shot_totals
 from pep_reign.transform.tables import league_tables, team_season
@@ -19,7 +25,7 @@ app = typer.Typer(help="Manchester City under Pep Guardiola: data pipeline.")
 @app.command()
 def ingest(refresh: bool = typer.Option(False, help="Re-download cached season files.")) -> None:
     """Download and validate PL results for Pep's seasons, then save them as Parquet."""
-    matches = load_seasons(SEASONS, refresh=refresh)
+    matches = load_seasons(ALL_SEASONS, refresh=refresh)
     MATCH_SCHEMA.validate(matches)
     check_matches_complete(matches)
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
@@ -37,7 +43,7 @@ def shots(refresh: bool = typer.Option(False, help="Re-download cached season fi
         raise typer.Exit(code=1)
 
     primary = pd.read_parquet(primary_path)
-    secondary = football_data.load_seasons(SEASONS, refresh=refresh)
+    secondary = football_data.load_seasons(ALL_SEASONS, refresh=refresh)
     joined = check_scores_agree(primary, secondary)
     out = PROCESSED_DIR / "football_data_matches.parquet"
     secondary.to_parquet(out, index=False)
@@ -62,8 +68,13 @@ def tables() -> None:
     else:
         typer.echo("no shot data yet; run `pep-reign shots` for shot rates")
 
+    all_tables = add_league_context(add_points_per_game(all_tables))
+    all_tables = add_era(all_tables)
     all_tables.to_csv(PROCESSED_DIR / "pl_tables.csv", index=False)
-    team_season(all_tables, CLUB).to_csv(PROCESSED_DIR / "city_seasons.csv", index=False)
+
+    city = team_season(all_tables, CLUB)
+    city.to_csv(PROCESSED_DIR / "city_seasons.csv", index=False)
+    era_summary(city).to_csv(PROCESSED_DIR / "city_era_summary.csv", index=False)
     typer.echo(f"wrote tables for {all_tables['season'].nunique()} seasons")
 
 
