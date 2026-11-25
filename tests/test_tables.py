@@ -49,3 +49,8 @@ def test_canonical_strips_fc_and_whitespace() -> None:
     assert canonical("Manchester City FC") == "Manchester City"
     assert canonical("  Chelsea   FC ") == "Chelsea"
     assert canonical("Brighton & Hove Albion") == "Brighton & Hove Albion"
+
+
+def test_canonical_strips_afc_suffix_but_keeps_afc_prefix() -> None:
+    assert canonical("Sunderland AFC") == "Sunderland"
+    assert canonical("AFC Bournemouth") == "AFC Bournemouth"
