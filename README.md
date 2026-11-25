@@ -36,16 +36,16 @@ make app       # open the Streamlit dashboard (needs: make install-extras)
 
 ## Stack
 
-| Area | Tools | Why |
-|---|---|---|
-| Language and data | Python, pandas, NumPy, DuckDB, Parquet | The core stack in data science and ML job postings |
-| Data validation | pandera | Schema checks at each pipeline stage, so bad input fails loudly |
-| Modelling (stretch) | scikit-learn, XGBoost | Standard tabular ML tools |
-| Experiment tracking (stretch) | MLflow | Tracking and model registry, a common requirement in ML roles |
-| Dashboard | Streamlit | Quick interactive data apps |
-| Packaging and environment | uv, pyproject.toml, Docker | Reproducible installs and a portable test environment |
-| Quality | pytest, ruff, mypy, pre-commit | Tests and style checks, which ML teams expect in code review |
-| CI | GitHub Actions | Runs lint, types and tests on every push |
+| Area | Tools |
+|---|---|
+| Language and data | Python, pandas, NumPy, DuckDB, Parquet |
+| Data validation | pandera |
+| Modelling (stretch) | scikit-learn, XGBoost |
+| Experiment tracking (stretch) | MLflow |
+| Dashboard | Streamlit |
+| Packaging and environment | uv, pyproject.toml, Docker |
+| Quality | pytest, ruff, mypy, pre-commit |
+| CI | GitHub Actions |
 
 ## Repository layout
 
