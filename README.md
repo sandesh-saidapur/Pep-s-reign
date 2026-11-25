@@ -10,6 +10,15 @@ An analytics and machine learning project asking how good Manchester City really
 
 The full plan is in [`docs/project-plan.md`](docs/project-plan.md). Data sources, licences and their limits are in [`docs/data-sources-and-week1.md`](docs/data-sources-and-week1.md).
 
+## Results so far
+
+Based on Premier League results and Football-Data shot counts. Full notes are in [`docs/findings-shots-v1.md`](docs/findings-shots-v1.md).
+
+- City's points per game rose from **1.74** in 2015/16 (pre-Pep) to **2.30** on average across Pep's nine seasons.
+- City created more shots than the league average in both eras, and the gap widened under Pep (about **+3.3** per game before, **+4.7** after).
+- City conceded the **fewest shots in the league in every season** from 2015/16 to 2024/25.
+- These are shot counts, not chances. xG (from Understat) is needed to say anything about chance quality. Understat is currently unavailable.
+
 ## Quick start
 
 Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/).
