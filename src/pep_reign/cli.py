@@ -78,5 +78,29 @@ def tables() -> None:
     typer.echo(f"wrote tables for {all_tables['season'].nunique()} seasons")
 
 
+@app.command()
+def model(test_from: str = typer.Option("2022-23", help="First held-out season.")) -> None:
+    """Train a match-result model on earlier seasons and score it on the rest.
+
+    Needs the ml extra: uv sync --extra ml
+    """
+    import json
+
+    from pep_reign.model.train import evaluate
+
+    path = PROCESSED_DIR / "football_data_matches.parquet"
+    if not path.exists():
+        typer.echo("no shot data yet; run `pep-reign shots` first", err=True)
+        raise typer.Exit(code=1)
+
+    report, _ = evaluate(pd.read_parquet(path), test_from=test_from)
+    metrics = report.as_dict()
+    out = PROCESSED_DIR / "model_metrics.json"
+    out.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    for key, value in metrics.items():
+        typer.echo(f"{key}: {value}")
+    typer.echo(f"wrote {out}")
+
+
 if __name__ == "__main__":
     app()
