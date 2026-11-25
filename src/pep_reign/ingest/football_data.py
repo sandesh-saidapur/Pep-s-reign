@@ -26,6 +26,8 @@ RENAME = {
     "HST": "home_shots_on_target",
     "AST": "away_shots_on_target",
 }
+ODDS_SOURCE = {"B365H": "home_odds", "B365D": "draw_odds", "B365A": "away_odds"}
+
 COLUMNS = [
     "season",
     "date",
@@ -37,6 +39,9 @@ COLUMNS = [
     "away_shots",
     "home_shots_on_target",
     "away_shots_on_target",
+    "home_odds",
+    "draw_odds",
+    "away_odds",
 ]
 
 
@@ -78,6 +83,13 @@ def parse(csv_text: str, season: str) -> pd.DataFrame:
 
     count_columns = [c for c in RENAME.values()]
     frame[count_columns] = frame[count_columns].astype(int)
+
+    # Bet365 pre-match odds, used as the bookmaker benchmark. Missing odds stay NaN.
+    for source, target in ODDS_SOURCE.items():
+        if source in raw.columns:
+            frame[target] = pd.to_numeric(raw.loc[frame.index, source], errors="coerce")
+        else:
+            frame[target] = float("nan")
     return frame[COLUMNS].reset_index(drop=True)
 
 

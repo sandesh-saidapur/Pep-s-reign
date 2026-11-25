@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from pep_reign.model.features import FEATURE_COLUMNS, build_features, rolling_form
-from pep_reign.model.train import evaluate, split
+from pep_reign.model.train import evaluate, implied_probabilities, split
 
 
 def _history(n_rounds: int = 10) -> pd.DataFrame:
@@ -31,6 +31,10 @@ def _history(n_rounds: int = 10) -> pd.DataFrame:
                     "away_shots": 8 + (r * i) % 6,
                     "home_shots_on_target": 3 + (r + i) % 3,
                     "away_shots_on_target": 2 + (r * i) % 3,
+                    # Constant synthetic prices: the test checks the arithmetic, not the market.
+                    "home_odds": 2.2,
+                    "draw_odds": 3.4,
+                    "away_odds": 3.6,
                 }
             )
     return pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
@@ -95,3 +99,20 @@ def test_evaluate_runs_end_to_end_on_synthetic_history() -> None:
     assert 0 < report.model_accuracy <= 1
     assert report.model_log_loss > 0
     assert list(model.classes_) == sorted(model.classes_)
+
+
+def test_implied_probabilities_sum_to_one_and_favour_shorter_odds() -> None:
+    frame = pd.DataFrame(
+        {"home_odds": [1.5], "draw_odds": [4.0], "away_odds": [6.0]},
+    )
+    probs = implied_probabilities(frame, ["A", "D", "H"])
+    assert probs.sum(axis=1) == pytest.approx([1.0])
+    away, draw, home = probs[0]
+    assert home > draw > away
+
+
+def test_evaluate_reports_bookmaker_benchmark_when_odds_present() -> None:
+    report, _ = evaluate(_history(n_rounds=12), test_from="2017-18")
+    assert report.n_test_with_odds == report.n_test
+    assert report.bookmaker_log_loss is not None and report.bookmaker_log_loss > 0
+    assert report.model_log_loss_odds_subset is not None

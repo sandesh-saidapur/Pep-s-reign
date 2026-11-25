@@ -77,7 +77,8 @@ def build_features(matches: pd.DataFrame) -> pd.DataFrame:
     form = rolling_form(matches)
     home = form.xs("home", level="side").add_suffix("_home")
     away = form.xs("away", level="side").add_suffix("_away")
-    frame = matches[["season", "date", "home", "away", "home_goals", "away_goals"]]
+    base = ["season", "date", "home", "away", "home_goals", "away_goals"]
+    frame = matches[base + [c for c in ODDS_COLUMNS if c in matches.columns]]
     frame = frame.join(home, how="inner").join(away, how="inner")
 
     for name in FORM_COLUMNS:
@@ -94,3 +95,4 @@ def _outcome(home_goals: pd.Series, away_goals: pd.Series) -> pd.Series:
 
 
 FEATURE_COLUMNS = [f"{c}_diff" for c in FORM_COLUMNS]
+ODDS_COLUMNS = ["home_odds", "draw_odds", "away_odds"]
