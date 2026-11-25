@@ -15,14 +15,15 @@ The full plan is in [`docs/project-plan.md`](docs/project-plan.md). Data sources
 Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-make install   # create the virtual environment and install dependencies
+make install   # create the virtual environment and install core dependencies
 make data      # download and validate PL results for 2016/17 to 2024/25
-make tables    # build league tables and City's season summary
+make shots     # download Football-Data shot stats and cross-check scores
+make tables    # build league tables and City's season summary, with shot rates
 make check     # lint, type-check and run the tests
-make app       # open the Streamlit dashboard
+make app       # open the Streamlit dashboard (needs: make install-extras)
 ```
 
-To install the optional machine learning and dashboard extras: `uv sync --extra ml --extra app`.
+`make install-extras` installs the optional machine learning and dashboard packages. It is not needed for the pipeline.
 
 ## Stack
 

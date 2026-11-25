@@ -1,10 +1,18 @@
-.PHONY: install data tables test lint format typecheck app check
+.PHONY: install install-extras data shots tables test lint format typecheck app check
 
+# Core and dev dependencies only. Optional extras are installed separately (see install-extras)
+# because some of their transitive packages lack wheels for every Python version.
 install:
-	uv sync --all-extras
+	uv sync
+
+install-extras:
+	uv sync --extra ml --extra app
 
 data:
 	uv run pep-reign ingest
+
+shots:
+	uv run pep-reign shots
 
 tables:
 	uv run pep-reign tables
