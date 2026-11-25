@@ -1,9 +1,9 @@
 .PHONY: install install-extras data shots tables test lint format typecheck app check
 
-# Core and dev dependencies only. Optional extras are installed separately (see install-extras)
-# because some of their transitive packages lack wheels for every Python version.
+# Core, dev and ML dependencies, as used by the tests and CI. The dashboard extra is
+# installed separately with install-extras.
 install:
-	uv sync
+	uv sync --extra ml
 
 install-extras:
 	uv sync --extra ml --extra app

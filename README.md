@@ -24,7 +24,7 @@ Based on Premier League results and Football-Data shot counts. Full notes are in
 Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-make install   # create the virtual environment and install core dependencies
+make install   # create the virtual environment: core, dev and ML dependencies
 make data      # download and validate PL results for 2016/17 to 2024/25
 make shots     # download Football-Data shot stats and cross-check scores
 make tables    # build league tables and City's season summary, with shot rates
@@ -32,7 +32,7 @@ make check     # lint, type-check and run the tests
 make app       # open the Streamlit dashboard (needs: make install-extras)
 ```
 
-`make install-extras` installs the optional machine learning and dashboard packages. It is not needed for the pipeline.
+`make install-extras` adds the Streamlit dashboard packages. The pipeline and tests don't need it.
 
 ## Stack
 
