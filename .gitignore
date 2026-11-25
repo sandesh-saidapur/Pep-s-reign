@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Data: raw downloads and derived files are reproducible, so they are not committed
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/README.md
+
+# MLflow, notebooks, OS and editor noise
+mlruns/
+mlartifacts/
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
+
+# Secrets
+.env
+*.env
