@@ -102,5 +102,33 @@ def model(test_from: str = typer.Option("2022-23", help="First held-out season."
     typer.echo(f"wrote {out}")
 
 
+@app.command()
+def robustness(n_boot: int = typer.Option(5000, help="Bootstrap resamples.")) -> None:
+    """Score each season out of sample, and give 95% intervals for the gaps to the benchmarks.
+
+    Needs the ml extra: uv sync --extra ml
+    """
+    import json
+
+    from pep_reign.model.robustness import TEST_SEASONS, by_season, per_match_losses, summarise
+
+    path = PROCESSED_DIR / "football_data_matches.parquet"
+    if not path.exists():
+        typer.echo("no shot data yet; run `pep-reign shots` first", err=True)
+        raise typer.Exit(code=1)
+
+    per_match = per_match_losses(pd.read_parquet(path), TEST_SEASONS)
+    table = by_season(per_match)
+    summary = summarise(per_match, n_boot=n_boot)
+
+    table.to_csv(PROCESSED_DIR / "model_by_season.csv", index=False)
+    out = PROCESSED_DIR / "model_robustness.json"
+    out.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    typer.echo(table.to_string(index=False))
+    for key, value in summary.items():
+        typer.echo(f"{key}: {value}")
+    typer.echo(f"wrote {out}")
+
+
 if __name__ == "__main__":
     app()
